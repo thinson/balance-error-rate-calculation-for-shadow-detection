@@ -11,8 +11,10 @@ history:
 
 
 # set prediction path and label path for eval
-pre_path = r'C:\Users\kang_\Desktop\label'
-label_path = r'C:\Users\kang_\Desktop\output'
+#pre_path = r'C:\Users\kang_\Desktop\label'
+pre_path = '/home/wukang/Projects/DSC-PyTorch-master/results'
+#label_path = r'C:\Users\kang_\Desktop\output'
+label_path = '/home/wukang/Projects/DSC-PyTorch-master/SBU-shadow/SBU-Test/ShadowMasks'
 #label_path = r'C:\Users\kang_\Desktop\label'
 
 
