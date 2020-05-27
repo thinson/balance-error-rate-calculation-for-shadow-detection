@@ -57,6 +57,7 @@ def BER(y_actual, y_hat):
 
     #print(TP/pos)
     #print(TN/neg)
+    '''
     if(pos!=0 and neg!=0):
         BAC = (.5 * ((TP / pos) + (TN / neg)))
     elif(neg==0):
@@ -65,19 +66,21 @@ def BER(y_actual, y_hat):
         BAC = (.5 * (TN / neg))
     else:
         BAC = .5
+    
     # print('tp:%d tn:%d fp:%d fn:%d' % (TP, TN, FP, FN))
     accuracy = (TP+TN)/(pos+neg)*100
     BER=(1-BAC)*100
-    return BER,accuracy
+    '''
+    return TP,TN,FP,FN
 
 if __name__ == "__main__":
     # get img file in a list
     img_list = os.listdir(pre_path)
     print(img_list)
-    average_ber = 0.0
-    average_accuracy = 0.0
-    sum_ber = 0.0
-    sum_accuracy = 0.0
+    sum_tp = 0.0
+    sum_tn = 0.0
+    sum_fp = 0.0
+    sum_fn = 0.0
     difficult = []
     for i,name in enumerate(img_list):
         if name.endswith('.png'):
@@ -85,15 +88,27 @@ if __name__ == "__main__":
             #print(predict)
             label = cv2.imread(os.path.join(label_path, name),cv2.IMREAD_GRAYSCALE)
             #print(label)
-            score, accuracy = BER(torch.from_numpy(label).float(), torch.from_numpy(predict).float())
-            sum_ber = sum_ber + score
-            average_ber = sum_ber/(i+1)
-            sum_accuracy = sum_accuracy + accuracy
-            average_accuracy = sum_accuracy/(i+1)
-            print("name:%s , ber:%f, average_ber:%f, accuracy:%f, average_accuracy=%f" % (name, score,average_ber,accuracy,average_accuracy))
-            if accuracy<96:
-                difficult.append((name,accuracy))
+            TP, TN, FP, FN = BER(torch.from_numpy(label).float(), torch.from_numpy(predict).float())
 
+            sum_tp = sum_tp + TP
+            sum_tn = sum_tn + TN
+            sum_fp = sum_fp + FP
+            sum_fn = sum_fn + FN
+    pos = sum_tp + sum_fn
+    neg = sum_tn + sum_fp
+
+    if (pos != 0 and neg != 0):
+        BAC = (.5 * ((sum_tp / pos) + (sum_tn / neg)))
+    elif (neg == 0):
+        BAC = (.5 * (sum_tp / pos))
+    elif (pos == 0):
+        BAC = (.5 * (sum_tn / neg))
+    else:
+        BAC = .5
+    accuracy = (sum_tp + sum_tn) / (pos + neg) * 100
+    global_ber = (1 - BAC) * 100
+
+    print("name:%s , ber:%f,  accuracy:%f" % (name, global_ber,accuracy))
     print(difficult)
 
 
