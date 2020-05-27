@@ -30,20 +30,19 @@ def BER(y_actual, y_hat):
     pred_n = y_hat.eq(0).float()
     #print(pred_n)
     #TP
-    tp_mat = torch.eq(pred_p,y_actual)
-    TP = float(tp_mat.sum())
+    pre_positive = float(pred_p.sum())
+    pre_negtive = float(pred_n.sum())
 
-    #FN
-    fn_mat = torch.eq(pred_n, y_actual)
+    # FN
+    fn_mat = torch.gt(y_actual, pred_p)
     FN = float(fn_mat.sum())
 
     # FP
-    fp_mat = torch.ne(y_actual, pred_p)
+    fp_mat = torch.gt(pred_p, y_actual)
     FP = float(fp_mat.sum())
 
-    # TN
-    fn_mat = torch.ne(y_actual, pred_n)
-    TN = float(fn_mat.sum())
+    TP = pre_positive - FP
+    TN = pre_negtive - FN
 
 
 
